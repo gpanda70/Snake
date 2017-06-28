@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+
+<body>
+
+<h1>Bad Snake Game lol</h1>
+
+
+<p>
+<button onclick="start()">Start Game</button>
+</p> 
+
+<p id = "output"></p>
+<p id = "output2"></p>
+<p id = "output3"></p>
+<p id = "output4"></p>
+
+<canvas id ="mycanvas" width = '400' height = '400'></canvas>
+
+
+<script>
+
+var px = 200;
+var py = 200;
+var w = 400;
+var h = 400;
+var xv = 0;
+var yv = 0;
+
+window.onload = function(){
+	canv = document.getElementById("mycanvas");
+	ctx = canv.getContext("2d");
+	document.addEventListener("keydown", keyPush, false);
+	
+};
+function start(){
+	px=200;
+	py=200;
+	direction = "none";
+	xv= 0;
+	yv =0;
+	id = setInterval(myMove, 1000/15);
+	gameStart = false;
+	genFood();
+	snake = [];
+	snake.push({x:px,y:py});
+	update = false;
+
+}
+	
+function myMove() {
+	
+	document.getElementById("output").innerHTML = snake[0].x;
+	document.getElementById("output2").innerHTML = snake[0].y;
+	
+
+	ctx.fillStyle = "black";
+	ctx.fillRect(0,0,canv.width, canv.height);
+	
+	ctx.fillStyle = "lime";
+	for(var i = 0; i<snake.length;i++){
+		ctx.fillRect(snake[i].x ,snake[i].y ,10,10);
+		ctx.strokeStyle="black";
+		ctx.strokeRect(snake[i].x ,snake[i].y,10,10);
+
+	}
+	
+	
+	if(hitFood()){
+		update = true;
+	}
+	genFood();
+
+
+	
+	if (px<0 || py<0 || px > 390 || py>390 ){
+		ctx.fillStyle = "lime";
+		ctx.fillRect(px -xv*10,py -yv*10,10,10);
+		clearInterval(id);
+		alert("Game Over, Press the start button");
+	}
+	else{
+		if(update){
+			var tail = {
+				x:px,
+				y:py
+			};
+			snake.push(tail);
+			update =false;
+		}
+		px = px+xv*10;
+		py = py+yv*10;
+		checkCollision(snake[0].x,snake[0].y,snake);
+		for(var j = snake.length-1; j > 0; j--){
+			snake[j].x = snake[j-1].x ;
+			snake[j].y = snake[j-1].y ;	
+
+		}
+		snake[0].x = px;
+		snake[0].y = py;
+
+		
+
+
+	}
+
+
+}
+function keyPush(event){
+	
+		switch(event.keyCode){
+			case 37:
+				if(direction != "right"){
+					direction = "left";
+					xv = -1; yv =0;
+				}
+				break;
+			case 38:
+				if(direction != "down"){
+					direction = "up";
+					xv = 0; yv = -1;	
+				}
+
+				break;
+			case 39:
+				if(direction!= "left"){
+					direction = "right";
+					xv = 1; yv =0;
+				}
+				
+				break;
+			case 40:
+				if(direction != "up"){
+					direction = "down";
+					xv = 0; yv = 1;
+				}
+				
+				break;	
+			case 90:
+				alert("stop");
+				break;
+		}
+	}
+	function genFood(){
+		if(gameStart == false || hitFood()){
+			fx = getRandomInt(0,39)*10;
+			fy = getRandomInt(0,39)*10;
+			gameStart = true;
+		}
+
+		ctx.fillStyle = "red";
+		
+		ctx.fillRect(fx,fy,10,10);
+	}	
+
+	function getRandomInt(min, max){
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min +1)) + min;
+	}
+
+	function hitFood(){
+		if (fx==snake[0].x && fy ==snake[0].y){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	function checkCollision(x,y,array){
+		for(var k =3; k<array.length; k++){
+			document.getElementById("output3").innerHTML = array[array.length-1].x;
+			document.getElementById("output4").innerHTML = array[array.length-1].y;
+			if(array[k].x === x && array[k].y===y){
+				alert('eh');
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+	}
+</script>
+</body>
+</html>
